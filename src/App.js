@@ -4,7 +4,9 @@ import LoginInterface from './page/Login';
 function App() {
   return (
    <>
-   <LoginInterface/>
+  <div id='gtaloginform' className='flex items-center justify-center w-full h-screen'>
+  <LoginInterface/>
+  </div>
    </>
   );
 }

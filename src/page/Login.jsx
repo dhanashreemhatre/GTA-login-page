@@ -52,7 +52,7 @@ const Button = ({ type, className, children }) => {
 
 const LoginInterface = () => {
   return (
-    <Card className="w-full max-w-md mx-auto mt-[20vh]">
+    <Card className="w-full max-w-md mx-auto">
       <CardHeader>
         <CardTitle>Charwinski Roleplay</CardTitle>
       </CardHeader>
