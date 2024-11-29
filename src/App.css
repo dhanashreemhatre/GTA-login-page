@@ -1,3 +1,7 @@
 #gtaloginform{
-  background-image: url("./page/car.jpg");
+  display: flex;
+  align-items: center; /* items-center */
+  justify-content: center; /* justify-center */
+  background: linear-gradient(to bottom right, black, #1a1a1a, #1e3a8a); /* bg-gradient-to-br, from-black, via-gray-900, to-blue-950 */
+  padding: 1rem; /* p-4 */
 }
