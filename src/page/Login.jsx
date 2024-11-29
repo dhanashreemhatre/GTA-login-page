@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const Card = ({ className, children }) => {
   return (
@@ -44,6 +44,7 @@ const CardTitle = ({ children }) => {
         font-bold 
         text-gray-200 
         text-center 
+        backdrop-blur-sm
       "
     >
       {children}
@@ -124,12 +125,13 @@ const InputLabel = ({ htmlFor, children }) => {
   );
 };
 
-const Button = ({ type, className, children }) => {
+const Button = ({ type, className, children, onClick }) => {
   return (
     <button
       type={type}
+      onClick={onClick}
       className={`
-        bg-black/90
+        bg-black/95 
         bg-opacity-60 
         backdrop-blur-md 
         text-gray-200 
@@ -152,47 +154,88 @@ const Button = ({ type, className, children }) => {
 };
 
 const LoginInterface = () => {
+  const [view, setView] = useState('login');
+
+  const renderLogin = () => (
+    <>
+      <div className="mb-4">
+        <InputLabel htmlFor="username">UserId</InputLabel>
+        <Input
+          id="username"
+          type="text"
+          placeholder="Remover"
+          icon={<div className="text-gray-400">@</div>}
+        />
+      </div>
+      <div className="mb-6">
+        <InputLabel htmlFor="password">Password</InputLabel>
+        <Input
+          id="password"
+          type="password"
+          placeholder="Incorrect password!"
+          icon={<div className="text-red-500">🔒</div>}
+        />
+      </div>
+      <Button type="submit" className="w-full">
+        Login
+      </Button>
+      <div 
+        className="
+          text-center 
+          text-gray-400 
+          mt-4 
+          cursor-pointer
+          hover:text-gray-200
+        "
+        onClick={() => setView('forgotPassword')}
+      >
+        Forgot password?
+      </div>
+    </>
+  );
+
+  const renderForgotPassword = () => (
+    <>
+      <div className="mb-4">
+        <InputLabel htmlFor="email">Email</InputLabel>
+        <Input
+          id="email"
+          type="email"
+          placeholder="Enter your email"
+          icon={<div className="text-gray-400">✉️</div>}
+        />
+      </div>
+      <Button type="submit" className="w-full mb-4">
+        Reset Password
+      </Button>
+      <div 
+        className="
+          text-center 
+          text-gray-400 
+          cursor-pointer
+          hover:text-gray-200
+        "
+        onClick={() => setView('login')}
+      >
+        Back to Login
+      </div>
+    </>
+  );
+
   return (
       <Card className="w-full max-w-md mx-auto">
         <CardHeader>
-          <CardTitle>Charwinski Roleplay</CardTitle>
+          <CardTitle>
+            {view === 'login' ? 'Charwinski Roleplay' : 'Forgot Password'}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <form>
-            <div className="mb-4">
-              <InputLabel htmlFor="username">UserId</InputLabel>
-              <Input
-                id="username"
-                type="text"
-                placeholder="Remover"
-                icon={<div className="text-gray-400">@</div>}
-              />
-            </div>
-            <div className="mb-6">
-              <InputLabel htmlFor="password">Password</InputLabel>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Incorrect password!"
-                icon={<div className="text-red-500">🔒</div>}
-              />
-            </div>
-            <Button type="submit" className="w-full">
-              Login
-            </Button>
+            {view === 'login' ? renderLogin() : renderForgotPassword()}
           </form>
-          <div 
-            className="
-              text-center 
-              text-gray-400 
-              mt-4 
-        
-            "
-          >
-            Forgot password?
-          </div>
         </CardContent>
       </Card>
+
   );
 };
 
