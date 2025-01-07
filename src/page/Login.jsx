@@ -1,5 +1,34 @@
 import React, { useState } from 'react';
 
+const AlertMessage = ({ message, type = "info", onClose }) => {
+  const alertStyles = {
+    info: "bg-blue-500 text-white",
+    success: "bg-green-500 text-white",
+    warning: "bg-yellow-500 text-black",
+    error: "bg-red-500 text-white",
+  };
+
+  return (
+    <div
+      className={`
+        fixed top-4 left-1/2 transform -translate-x-1/2
+        px-4 py-3 rounded-lg shadow-lg
+        flex items-center justify-between
+        ${alertStyles[type]}
+      `}
+    >
+      <span>{message}</span>
+      <button
+        className="ml-4 text-lg font-bold hover:opacity-70"
+        onClick={onClose}
+      >
+        &times;
+      </button>
+    </div>
+  );
+};
+
+
 const Card = ({ className, children }) => {
   return (
     <div 
@@ -154,16 +183,55 @@ const Button = ({ type, className, children, onClick }) => {
 };
 
 const LoginInterface = () => {
-  const [view, setView] = useState('login');
+  const [view, setView] = useState("login");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [alert, setAlert] = useState(null);
+
+  const showAlert = (message, type) => {
+    setAlert({ message, type });
+    setTimeout(() => {
+      setAlert(null);
+    }, 3000); // Auto-hide after 3 seconds
+  };
+
+  const handleLoginSubmit = (e) => {
+    e.preventDefault();
+
+    if (!username || !password) {
+      showAlert("Please fill in all fields!", "error");
+      return;
+    }
+
+    // Emit login event
+    showAlert("Logging in...", "success");
+    window.alt?.emit("Auth.Login", username, password);
+  };
+
+  const handleResetPasswordSubmit = (e) => {
+    e.preventDefault();
+
+    if (!email) {
+      showAlert("Please enter your email!", "error");
+      return;
+    }
+
+    // Emit reset password event
+    showAlert("Password reset link sent!", "success");
+    window.alt?.emit("Auth.ResetPassword", email);
+  };
 
   const renderLogin = () => (
     <>
       <div className="mb-4">
-        <InputLabel htmlFor="username">UserId</InputLabel>
+        <InputLabel htmlFor="username">Username</InputLabel>
         <Input
           id="username"
           type="text"
-          placeholder="Remover"
+          placeholder="Enter your username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           icon={<div className="text-gray-400">@</div>}
         />
       </div>
@@ -172,22 +240,18 @@ const LoginInterface = () => {
         <Input
           id="password"
           type="password"
-          placeholder="Incorrect password!"
+          placeholder="Enter your password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           icon={<div className="text-red-500">🔒</div>}
         />
       </div>
       <Button type="submit" className="w-full">
         Login
       </Button>
-      <div 
-        className="
-          text-center 
-          text-gray-400 
-          mt-4 
-          cursor-pointer
-          hover:text-gray-200
-        "
-        onClick={() => setView('forgotPassword')}
+      <div
+        className="text-center text-gray-400 mt-4 cursor-pointer hover:text-gray-200"
+        onClick={() => setView("forgotPassword")}
       >
         Forgot password?
       </div>
@@ -202,20 +266,17 @@ const LoginInterface = () => {
           id="email"
           type="email"
           placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           icon={<div className="text-gray-400">✉️</div>}
         />
       </div>
       <Button type="submit" className="w-full mb-4">
         Reset Password
       </Button>
-      <div 
-        className="
-          text-center 
-          text-gray-400 
-          cursor-pointer
-          hover:text-gray-200
-        "
-        onClick={() => setView('login')}
+      <div
+        className="text-center text-gray-400 cursor-pointer hover:text-gray-200"
+        onClick={() => setView("login")}
       >
         Back to Login
       </div>
@@ -223,20 +284,30 @@ const LoginInterface = () => {
   );
 
   return (
+    <>
+      {alert && (
+        <AlertMessage
+          message={alert.message}
+          type={alert.type}
+          onClose={() => setAlert(null)}
+        />
+      )}
       <Card className="w-full max-w-md mx-auto">
         <CardHeader>
           <CardTitle>
-            {view === 'login' ? 'Charwinski Roleplay' : 'Forgot Password'}
+            {view === "login" ? "Charwinski Roleplay" : "Forgot Password"}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <form>
-            {view === 'login' ? renderLogin() : renderForgotPassword()}
+          <form onSubmit={view === "login" ? handleLoginSubmit : handleResetPasswordSubmit}>
+            {view === "login" ? renderLogin() : renderForgotPassword()}
           </form>
         </CardContent>
       </Card>
-
+    </>
   );
 };
 
 export default LoginInterface;
+
+
